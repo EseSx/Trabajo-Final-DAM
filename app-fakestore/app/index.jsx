@@ -9,10 +9,11 @@ import {
   FlatList,
   TouchableOpacity,
   Dimensions,
+  Animated,
 } from "react-native";
 
 // Importo los hooks necesarios de React
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 // Importo los iconos necesarios
 import Icon from "react-native-vector-icons/Feather";
@@ -62,6 +63,9 @@ export default function Index() {
   // Número de ítems por página
   const itemsPerPage = 5;
 
+  // Referencia para las animaciones de escala
+  const scaleAnimations = useRef({});
+
   // Efecto para obtener los datos de la API al montar el componente
   useEffect(() => {
     const fetchFakeStoreData = async () => {
@@ -84,22 +88,18 @@ export default function Index() {
 
   // Función para manejar la carga de más productos al llegar al final de la lista
   const handleLoadMore = () => {
-    if (loadingMore) return;
+    if (loadingMore || input.length > 0) return;
 
-    // Si ya se han cargado todos los productos, no hacer nada
+    const nextPage = page + 1;
+    const start = (nextPage - 1) * itemsPerPage;
+
+    if (start >= data.length) return;
+
     setLoadingMore(true);
 
-    // Calculo la siguiente página
-    const nextPage = page + 1;
-
-    // Calculo los índices de los nuevos productos a cargar
-    const start = (nextPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-
-    // Los nuevos productos que se van a recibir
     const newItems = data.slice(start, end);
 
-    // Simulo un retardo para la carga
     setTimeout(() => {
       setVisibleData((prev) => [...prev, ...newItems]);
       setPage(nextPage);
@@ -133,67 +133,101 @@ export default function Index() {
   }
 
   // Función para renderizar cada ítem de la lista
-  const renderItem = ({ item }) => (
-    // Cada tarjeta de producto
-    <TouchableOpacity
-      activeOpacity={1}
-      style={{ width: "48%" }}
-      // Navegación al detalle del producto con sus parámetros
-      onPress={() =>
-        router.push({
-          pathname: "Product",
-          params: {
-            id: item.id,
-            title: item.title,
-            img: item.image,
-            description: item.description,
-            price: item.price,
-            category: item.category,
-          },
-        })
-      }
-    >
-      <View style={styles.card}>
-        {/* Boton de favorito */}
-        <TouchableOpacity
-          style={styles.favoriteButton}
-          onPress={() => toggleFavorite(item.id, item)}
-        >
-          <MaterialIcon
-            name={favorites[item.id] ? "star" : "star-outline"}
-            size={24}
-            color="#fff"
+  const renderItem = ({ item, index }) => {
+    // Si no existe la animación para este item, la creo
+    if (!scaleAnimations.current[item.id]) {
+      scaleAnimations.current[item.id] = new Animated.Value(1);
+    }
+
+    const scale = scaleAnimations.current[item.id];
+
+    // Función para manejar la pulsación del botón de favorito con animación
+    const handleFavoritePress = () => {
+      Animated.sequence([
+        Animated.timing(scale, {
+          toValue: 1.1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scale, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start();
+
+      toggleFavorite(item.id, item);
+    };
+
+    return (
+      <TouchableOpacity
+        activeOpacity={1}
+        style={{ width: "48%" }}
+        onPress={() =>
+          router.push({
+            pathname: "Product",
+            params: {
+              id: item.id,
+              title: item.title,
+              img: item.image,
+              description: item.description,
+              price: item.price,
+              category: item.category,
+            },
+          })
+        }
+      >
+        <View style={styles.card}>
+          {/* Botón de favorito animado */}
+          <Animated.View
+            style={{
+              transform: [{ scale }],
+              position: "absolute",
+              top: 10,
+              right: 10,
+              zIndex: 10,
+            }}
+          >
+            <TouchableOpacity
+              style={styles.favoriteButton}
+              onPress={handleFavoritePress}
+            >
+              <MaterialIcon
+                name={favorites[item.id] ? "star" : "star-outline"}
+                size={24}
+                color="#fff"
+              />
+            </TouchableOpacity>
+          </Animated.View>
+
+          <Image
+            source={{ uri: item.image }}
+            style={{ width: "100%", height: 150 }}
+            resizeMode="contain"
           />
-        </TouchableOpacity>
 
-        <Image
-          source={{ uri: item.image }}
-          style={{ width: "100%", height: 150 }}
-          resizeMode="contain"
-        />
+          <Text style={styles.title}>{item.title}</Text>
+          <Text style={styles.price}>${item.price}</Text>
 
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.price}>${item.price}</Text>
-
-        {/* Boton de categoría */}
-        <TouchableOpacity
-          style={styles.categoryButton}
-          onPress={() =>
-            router.push({
-              pathname: "Category",
-              params: { category: item.category },
-            })
-          }
-        >
-          <Text style={styles.categoryButtonText}>{item.category}</Text>
-        </TouchableOpacity>
-      </View>
-    </TouchableOpacity>
-  );
+          <TouchableOpacity
+            style={styles.categoryButton}
+            onPress={() =>
+              router.push({
+                pathname: "Category",
+                params: { category: item.category },
+              })
+            }
+          >
+            <Text style={styles.categoryButtonText}>{item.category}</Text>
+          </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={styles.screen}>
-      {/* Input de búsqueda */}
+      {/* BUSCADOR */}
       <View style={styles.searchContainer}>
         <View style={styles.searchBox}>
           <Icon
@@ -224,7 +258,7 @@ export default function Index() {
         </View>
       </View>
 
-      {/* Renderizado de los productos recibidos */}
+      {/* LISTA */}
       <FlatList
         data={displayedData}
         renderItem={renderItem}
@@ -235,14 +269,16 @@ export default function Index() {
           paddingHorizontal: 10,
         }}
         contentContainerStyle={{ padding: 15, paddingBottom: 80 }}
-        onEndReached={handleLoadMore} // Cargar más al llegar al final
-        onEndReachedThreshold={0.5} // Umbral para activar la carga
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.5}
         ListFooterComponent={
-          loadingMore && <ActivityIndicator size="small" color="#0000ff" />
-        } // Indicador de carga al final
+          loadingMore ? (
+            <ActivityIndicator size="small" color="#006d77" />
+          ) : null
+        }
       />
 
-      {/* Barra de navegación inferior */}
+      {/* NAVBAR */}
       <View style={[styles.navBar, { paddingBottom: insets.bottom }]}>
         <TouchableOpacity
           onPress={() => router.navigate("/")}
