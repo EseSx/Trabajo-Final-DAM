@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "app-fakestore",
-    "slug": "app-fakestore",
+    "name": "CarritoLoco",
+    "slug": "CarritoLoco",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/icons/CarritoLoco.png",
     "scheme": "appfakestore",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -19,7 +19,9 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.esesx.carritoloco",
+      "icon": "./assets/icons/CarritoLoco.png"
     },
     "web": {
       "output": "static",
@@ -44,6 +46,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "1ebdb065-c521-4b8b-884e-3d56b5d755af"
+      }
     }
   }
 }
