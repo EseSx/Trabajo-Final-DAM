@@ -1,10 +1,10 @@
 {
   "expo": {
     "name": "CarritoLoco",
-    "slug": "CarritoLoco",
+    "slug": "app-fakestore",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icons/CarritoLoco.png",
+    "icon": "./assets/icons/CarCrash.png",
     "scheme": "appfakestore",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -14,14 +14,14 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "foregroundImage": "./assets/icons/CarCrash.png",
+        "backgroundImage": "./assets/icons/CarCrash.png",
+        "monochromeImage": "./assets/icons/CarCrash.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.esesx.carritoloco",
-      "icon": "./assets/icons/CarritoLoco.png"
+      "icon": "./assets/icons/CarCrash.png"
     },
     "web": {
       "output": "static",
