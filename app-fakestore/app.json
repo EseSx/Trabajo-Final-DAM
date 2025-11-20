@@ -4,7 +4,7 @@
     "slug": "app-fakestore",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icons/CarCrash.png",
+    "icon": "./assets/icons/CarCrashIcon.png",
     "scheme": "appfakestore",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -14,14 +14,14 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/icons/CarCrash.png",
-        "backgroundImage": "./assets/icons/CarCrash.png",
-        "monochromeImage": "./assets/icons/CarCrash.png"
+        "foregroundImage": "./assets/icons/CarCrashIcon.png",
+        "backgroundImage": "./assets/icons/CarCrashIcon.png",
+        "monochromeImage": "./assets/icons/CarCrashIcon.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.esesx.carritoloco",
-      "icon": "./assets/icons/CarCrash.png"
+      "icon": "./assets/icons/CarCrashIcon.png"
     },
     "web": {
       "output": "static",
@@ -33,7 +33,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/icons/CarCrash.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",

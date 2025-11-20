@@ -8,7 +8,6 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  Dimensions,
   Animated,
 } from "react-native";
 
@@ -88,18 +87,23 @@ export default function Index() {
 
   // Función para manejar la carga de más productos al llegar al final de la lista
   const handleLoadMore = () => {
+    // Si ya estoy cargando más o hay un input de búsqueda, no hago nada
     if (loadingMore || input.length > 0) return;
 
+    // Sigo con la paginación
     const nextPage = page + 1;
     const start = (nextPage - 1) * itemsPerPage;
 
+    // Si ya no hay más ítems para cargar, no hago nada
     if (start >= data.length) return;
 
     setLoadingMore(true);
 
+    // Calculo los nuevos ítems a mostrar
     const end = start + itemsPerPage;
     const newItems = data.slice(start, end);
 
+    // Simulo un retardo para la carga
     setTimeout(() => {
       setVisibleData((prev) => [...prev, ...newItems]);
       setPage(nextPage);
